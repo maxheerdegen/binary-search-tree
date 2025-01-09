@@ -29,7 +29,7 @@ function merge (left, right) {
     return sortedArr;
 }
 
-function createNode (data, left, right) {
+function createNode (data, left = null, right = null) {
     return { data, left, right }
 }
 
@@ -56,7 +56,29 @@ function createTree (arr) {
         return root;
     }
 
-    const root = buildTree(sortedArr);
+    let root = buildTree(sortedArr);
+
+    const insert = (value) => {
+        let current = root;
+        let previous;
+        let insertNode =  createNode(value);
+
+        while (current) {
+            previous = current;
+            if (value > current.data) {
+                current = current.right;
+            } else {
+                current = current.left;
+            }
+        }
+        if (value > previous.data) {
+            previous.right = insertNode;
+            console.log("right");
+        } else {
+            previous.left = insertNode;
+            console.log("left");
+        }
+    }
     
-    return { root };
+    return { root, insert };
 }
