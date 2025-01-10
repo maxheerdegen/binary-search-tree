@@ -144,6 +144,31 @@ function createTree (arr) {
 
         return current;
     }
+
+    const levelOrder = (callback) => {
+        let arr = [root];
+        let q;
+
+        while (arr.length) {
+            q = arr.length;
+            for (let i = 0; i < q; i++) {
+                if (arr[i].left !== null) {
+                    arr.push(arr[i].left);
+                }
+                if (arr[i].right !== null) {
+                    arr.push(arr[i].right);
+                }
+                callback(arr[i]);
+            }
+            for (let i = 0; i < q; i++) {
+                arr.shift();
+            }
+        }
+    }
     
-    return { root, insert, deleteItem, find };
+    return { root, insert, deleteItem, find, levelOrder };
+}
+
+function print (a) {
+    console.log(a);
 }
