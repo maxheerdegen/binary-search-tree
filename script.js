@@ -73,12 +73,64 @@ function createTree (arr) {
         }
         if (value > previous.data) {
             previous.right = insertNode;
-            console.log("right");
         } else {
             previous.left = insertNode;
-            console.log("left");
         }
     }
+
+    const deleteItem = (value) => {
+        let current = root;
+        let previous;
+        let toBeDeleted;
+        let direction = ""
+
+        while (current) {
+            if (value === current.data) {
+                break;
+            }
+            previous = current;
+            if (value > current.data) {
+                current = current.right;
+                direction = "right";
+            }
+            if (value < current.data) {
+                current = current.left;
+                direction = "left";
+            }
+        }
+
+        if (current.right === null && current.left === null) {
+            previous[direction] = null;
+        }
+
+        if (current.right !== null && current.left !== null) {
+            toBeDeleted = current;
+            current = current.right;
+
+            while(current.left) {
+                previous = current;
+                current = current.left;
+            }
+
+            toBeDeleted.data = current.data;
+
+            if (current.right === null) {
+                toBeDeleted.right = null;
+            }
+
+            if (current.right !== null) {
+                previous.left = current.right;
+            }
+        }
+
+        if (current.right !== null) {
+            previous[direction] = current.right;
+        }
+        if (current.left !== null) {
+            previous[direction] = current.left;
+        }
+
+    }
     
-    return { root, insert };
+    return { root, insert, deleteItem };
 }
