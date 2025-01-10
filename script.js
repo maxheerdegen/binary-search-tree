@@ -129,8 +129,21 @@ function createTree (arr) {
         if (current.left !== null) {
             previous[direction] = current.left;
         }
+    }
 
+    const find = (value) => {
+        let current = root;
+
+        while (current && value !== current.data) {
+            if (value < current.data) {
+                current = current.left;
+            } else {
+                current = current.right;
+            }
+        }
+
+        return current;
     }
     
-    return { root, insert, deleteItem };
+    return { root, insert, deleteItem, find };
 }
