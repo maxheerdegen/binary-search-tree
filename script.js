@@ -165,8 +165,48 @@ function createTree (arr) {
             }
         }
     }
+
+    const preOrder = (root, callback) => {
+        if (root === null) {
+            return;
+        }
+        callback (root.data);
+        preOrder (root.left, callback);
+        preOrder (root.right, callback);
+    }
     
-    return { root, insert, deleteItem, find, levelOrder };
+    const inOrder = (root, callback) => {
+        if (root === null) {
+            return;
+        }
+        inOrder(root.left, callback);
+        callback(root.data);
+        inOrder(root.right, callback);
+    }
+
+    const postOrder = (root, callback) => {
+        if (root === null) {
+            return;
+        }
+        postOrder(root.left, callback);
+        postOrder(root.right, callback);
+        callback(root.data);
+    }
+
+    const height = (value) => {
+        let current = root;
+        while (current && current.data !== value) {
+            if (value < current.data) {
+                current = current.left;
+            }
+            if (value > current.data) {
+                current = current.right;
+            }
+        }
+        
+    }
+
+    return { root, insert, deleteItem, find, levelOrder, preOrder, inOrder, postOrder };
 }
 
 function print (a) {
