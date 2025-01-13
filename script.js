@@ -29,6 +29,26 @@ function merge (left, right) {
     return sortedArr;
 }
 
+const buildTree = (arr) => {
+        
+    if (arr.length === 0) {
+        return null;
+    }
+
+    let mid = Math.floor(arr.length/2);
+    let leftArr = arr.slice(0, mid);
+    let rightArr = arr.slice(mid + 1);
+    
+    let root = createNode(arr[mid]);
+    console.log(leftArr);
+    console.log(rightArr);
+    
+    root.left = buildTree(leftArr);
+    root.right = buildTree(rightArr);
+    
+    return root;
+}
+
 function createNode (data, left = null, right = null) {
     return { data, left, right }
 }
@@ -36,25 +56,6 @@ function createNode (data, left = null, right = null) {
 function createTree (arr) {
     const sortedArr = mergesort(arr);
     
-    const buildTree = (arr) => {
-        
-        if (arr.length === 0) {
-            return null;
-        }
-
-        let mid = Math.floor(arr.length/2);
-        let leftArr = arr.slice(0, mid);
-        let rightArr = arr.slice(mid + 1);
-        
-        let root = createNode(arr[mid]);
-        console.log(leftArr);
-        console.log(rightArr);
-        
-        root.left = buildTree(leftArr);
-        root.right = buildTree(rightArr);
-        
-        return root;
-    }
 
     let root = buildTree(sortedArr);
 
@@ -166,47 +167,110 @@ function createTree (arr) {
         }
     }
 
-    const preOrder = (root, callback) => {
+    const preOrder = function (callback, root = this.root) {
         if (root === null) {
             return;
         }
         callback (root.data);
-        preOrder (root.left, callback);
-        preOrder (root.right, callback);
+        preOrder (callback, root.left);
+        preOrder (callback, root.right);
     }
     
-    const inOrder = (root, callback) => {
+    const inOrder = function (callback, root = this.root) {
         if (root === null) {
             return;
         }
-        inOrder(root.left, callback);
+        inOrder(callback, root.left);
         callback(root.data);
-        inOrder(root.right, callback);
+        inOrder(callback, root.right);
     }
 
-    const postOrder = (root, callback) => {
+    const postOrder = function (callback, root = this.root) {
         if (root === null) {
             return;
         }
-        postOrder(root.left, callback);
-        postOrder(root.right, callback);
+        postOrder(callback, root.left);
+        postOrder(callback, root.right);
         callback(root.data);
     }
 
     const height = (value) => {
+        let start = find(value);
+        let q = [start];
+        let height = 0;
+
+        while (q.length > 0) {
+            let level = q.length;
+            for (let i = 0; i < level; i++) {
+                let current = q.shift();
+                if (current.left !== null) {
+                    q.push(current.left);
+                }
+                if (current.right !== null) {
+                    q.push(current.right);
+                }
+            }   
+            height++;
+        }
+        return height;
+    }
+
+    
+    const depth = (value) => {
         let current = root;
+        let depth = 1;
         while (current && current.data !== value) {
-            if (value < current.data) {
-                current = current.left;
-            }
             if (value > current.data) {
                 current = current.right;
             }
+            if (value < current.data) {
+                current = current.left;
+            }
+            depth++;
         }
-        
+        if (current !== null) {
+            return depth;
+        } else {
+            return null;
+        }
+    }
+    
+    const totalDepth = function (root = this.root) {
+        if (root === null) {
+            return 0;
+        }
+        let leftHeight = totalDepth(root.left);
+        let rightHeight = totalDepth(root.right);
+
+        return Math.max(leftHeight, rightHeight) + 1;
     }
 
-    return { root, insert, deleteItem, find, levelOrder, preOrder, inOrder, postOrder };
+    const isBalanced = function (root = this.root) {
+        if (root === null) {
+            return true;
+        }
+        let rightHeight = totalDepth(root.right);
+        let leftHeight = totalDepth(root.left);
+
+        let heightDiff = Math.abs(rightHeight - leftHeight);
+        if (heightDiff > 1) {
+            return false;
+        }
+
+        return isBalanced(root.left) && isBalanced(root.right);
+    }
+    
+    
+    const rebalance = function () {
+        function toArray (number) {
+            arr.push(number);
+        }
+        let arr = [];
+        this.inOrder(toArray);
+        this.root = buildTree(arr);
+    }
+
+    return { root, insert, deleteItem, find, levelOrder, preOrder, inOrder, postOrder, height, depth, isBalanced, rebalance };
 }
 
 function print (a) {
